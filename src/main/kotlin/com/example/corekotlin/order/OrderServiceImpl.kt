@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class OrderServiceImpl(
     private val memberRepository: MemberRepository,
-    private val DiscountPolicy: DiscountPolicy
+    private val discountPolicy: DiscountPolicy
 ): OrderService {
 
 //    private val memberRepository: MemberRepository
@@ -23,6 +23,8 @@ class OrderServiceImpl(
 
 
     override fun createOrder(memberId: Long, itemName: String, price: Int): Order {
-        TODO("Not yet implemented")
+        val member = memberRepository.findById(memberId)
+        val discountPrice = member?.let { discountPolicy.discount(it, price) } ?: 0
+        return Order(memberId, itemName, price, discountPrice)
     }
 }
